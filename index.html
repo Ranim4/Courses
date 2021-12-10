@@ -1,0 +1,123 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Courses</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .barre {
+            text-decoration: line-through;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+        integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <!-- container container-fluid  -->
+    <div class="container">
+        <div id="app" class="row">
+            <div class="offset-3 col-6">
+                <h1> Liste de courses</h1> <br>
+                <div class="row">
+                    <div class="col-6"><input id="item" class="form-control" placeholder="Item"></div>
+                    <div class="col-2"><button class="btn btn-success"><i class="fa fa-plus"
+                                onclick="ajouter()"></i></button></div>
+                </div> <br>
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="table">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <template id="template">
+        <tr>
+            <td class="type">
+
+            </td>
+            <td><button class="btn btn-primary"><i class="fa fa-check"></i></button>
+                &nbsp;
+                <button class="btn btn-danger del"><i class="fa fa-trash"></i></button>
+            </td>
+        </tr>
+    </template>
+    <script>
+        let panier = [];
+        let copie = [];
+
+        function ajouter() {
+            // lecture des champs input 
+            let item = document.querySelector('#item').value;
+            document.querySelector('#item').value = ''; // on vide les champ input
+            let fruit = {}; // je crée un objet
+            fruit.item = item;
+            fruit.statut = false;
+            // je stocke ds le tableau
+            panier.push(fruit);
+            copie.push(fruit);
+            console.log(panier);
+            afficherTableau();
+        }
+        function afficherTableau() {
+            let template = document.querySelector('#template');
+            let tbody = document.querySelector('#table');
+            tbody.innerHTML = ''; // vider le tableau HTML
+            for (let i = 0; i < panier.length; i++) {
+                let tr = template.content.cloneNode(true);
+                let td = tr.querySelectorAll('td');
+                if (panier[i].statut) {
+                    td[0].innerHTML = panier[i].item.strike();
+                }
+                else {
+                    td[0].innerHTML = panier[i].item;
+                }
+                // je met le selecteur sur le btn effacer
+                let btnDelete = tr.querySelector('.btn-danger');
+                btnDelete.onclick = function () {
+                    let i = btnDelete.parentElement.parentElement.rowIndex - 1;
+                    console.log(i);
+                    panier.splice(i, 1);
+                    copie.splice(i, 1);
+                    this.parentElement.parentElement.remove();
+                    afficherTableau();
+                }
+                let btnModif = tr.querySelector('.btn-primary');
+                if (panier[i].statut) {
+                    tr.querySelector('tr').setAttribute('class', 'table-danger');
+                }
+                else {
+                    tr.querySelector('tr').setAttribute('class', '')
+                }
+                btnModif.onclick = function () {
+                    if (panier[i].statut) {
+                        panier[i].statut = false;
+                    }
+                    else {
+                        panier[i].statut = true;
+
+                    }
+                    afficherTableau();
+                }
+
+                tbody.appendChild(tr);
+            }
+
+            console.log(panier);
+
+        }
+
+    </script>
+</body>
+
+</html>
